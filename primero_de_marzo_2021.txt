@@ -1,0 +1,74 @@
+solucion final Marzo_de_2021 
+
+https://www.cubawiki.com.ar/index.php/Finales_Virtuales_Tleng:_Marzo_de_2021
+
+ej 1 y 2 del primero de marzo
+1)
+Asumiré que la gramatica sea no recursiva a izquierda nos dice que tampoco puede ser recursiva a izquierda de manera no inmediata  (A -> Bc; B -> Ad;)
+
+Como las producciones de una gramatica independiente de contexto siempre tienen un no terminal en su antecedente, la hipotética derivacion no acotada siempre tiene que usar producciones cuyo consecuente tiene un no terminal a la izquierda. Ejemplo: C -> Dw, con C,D € N ^ w € (N U T)*
+
+Como trabajamos con una cantidad limitada de no terminales #N, empezando desde un no terminal solo dispondremos de, a lo sumo, #N producciones válidas. Teniendo en cuenta que no se puede pasar dos veces por el mismo no terminal, la cantidad de reducciones estara acotada por la cantidad de no terminales en la gramática
+
+
+2)
+Empecemos pensando cuales son los casos que queremos "fixear".
+Producciones de un no terminal a:
+- otro no terminal (A -> B)
+- más de tres no terminales (A -> BCDE)
+- cadenas que contengan mezclas de no terminales y terminales
+- cadenas que contengan más de un terminal
+
+Los últimos dos grupos los podemos "fixear" creando un no terminal específico para cada terminal y reemplazando todas las apariciones conflictivas de terminales por sus no terminales respectivos. Esto va a hacer que algunas de las producciones queden efectivamente fixeadas y otras que pasen a ser de los primeros dos grupos. 
+Deberíamos poder lograr esto recorriendo todas las producciones y realizando las modificaciones adecuadas al encontrar cada terminal. El costo temporal de hacer esto va a estar acotado por O(#P + #N + #T).
+
+El primer grupo podemos "fixearlo" agregando, para cada producción 
+Pb = B -> Wb con Wb € (N U T)* 
+y para cada producción 
+Pa = C -> Wa con C € N ^ Wa € (N U T)* ^ A € Wa 
+una nueva produccion C -> Wa' que viene de reemplazar las apariciones de A en Wa por el contenido de Wb. Luego podemos descartar la producción (A -> B). Para garantizar que esto eventualmente nos lleva a un caso "base" podemos filtrar las producciones "estériles" antes de iniciar este paso. 
+Al terminar de lidiar con los casos de este primer grupo, podemos limpiar las producciones inalcanzables que hayan quedado a causa de las eliminaciones que hicimos.
+Notar que la existencia de una producción B -> BQ con Q arbitrario no es problemática, esta implicará la creación de la producción A -> BQ, la cual caerá en alguno de los otros casos.
+Para ver el costo de eliminar producciones inútiles (inalcanzables o estériles) TODO: hay que pensar como se hace esto
+Luego, el costo de agregar las nuevas producciones será el costo de recorrer todas las producciones O(#P + #N + #T) sumado al costo de todas las producciones que se agregan por cada producción de la forma A -> B. Acotaré gruesamente esto con O(#P^2) porque por un lado todas las producciones podrían ser de la forma A -> B y por el otro podría pasar que la mayoría de las producciones sean de la forma B -> C, con C € (N U T), entonces habrían ~#P opciones para cada caso.
+
+Finalmente, el segundo grupo puede ser tratado de la siguiente manera:
+Como del lado derecho de estas producciones hay al menos cuatro no terminales, podemos crear dos nuevos no terminales, con una producción cada uno, reduciendo a cada mitad de la producción original. Podemos seguir con este procedimiento hasta que los consecuentes de estas producciones sean de tamaño dos o tres.
+El costo temporal de este paso será, por cada producción, proporcional al costo de "achicar el consecuente". Como en cada iteración partimos a la mitad el consecuente en dos casos, la complejidad será la misma que la de merge sort: O(n.log(n)), siendo n el tamaño del consecuente. Entonces se tiene que el costo de esta etapa es O(#P.|max_cons|xlog(|max_cons|))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
